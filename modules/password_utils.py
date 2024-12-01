@@ -3,22 +3,25 @@ import random
 import string
 
 def generate_password(length, include_symbols, symbols_at_end, include_numbers, include_uppercase):
-    letters = string.ascii_lowercase
+    letters = ''
+    letters_low = string.ascii_lowercase
+    letters = letters_low
     if include_uppercase:
-        letters += string.ascii_uppercase
+        letters_upp = string.ascii_uppercase
+        letters += letters_upp
     digits = string.digits if include_numbers else ''
     # symbols = string.punctuation if include_symbols else ''
     symbols = "*-+./=$#@%;" if include_symbols else ''
 
     # Asegurar que al menos haya un número, una mayúscula y un símbolo si se incluyen
     password = ''
-    password += random.choice(letters)
+    password += random.choice(letters_low)
     length -= 1
     if include_numbers:
         password += random.choice(digits)
         length -= 1
     if include_uppercase:
-        password += random.choice(string.ascii_uppercase)
+        password += random.choice(letters_upp)
         length -= 1
     if include_symbols:
         if not symbols_at_end:
