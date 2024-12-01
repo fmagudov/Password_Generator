@@ -1,17 +1,19 @@
 from sqlite3 import Error
 import random
 import string
-from .database import execute_query
 
 def generate_password(length, include_symbols, symbols_at_end, include_numbers, include_uppercase):
     letters = string.ascii_lowercase
     if include_uppercase:
         letters += string.ascii_uppercase
     digits = string.digits if include_numbers else ''
-    symbols = string.punctuation if include_symbols else ''
+    # symbols = string.punctuation if include_symbols else ''
+    symbols = "*-+./=$#@%;" if include_symbols else ''
 
     # Asegurar que al menos haya un número, una mayúscula y un símbolo si se incluyen
     password = ''
+    password += random.choice(letters)
+    length -= 1
     if include_numbers:
         password += random.choice(digits)
         length -= 1
