@@ -2,7 +2,7 @@ import flet as ft
 from sqlite3 import IntegrityError
 from modules.config import load_config, save_config
 from modules.password_utils import generate_password, is_password_unique
-from modules.database import init_db, execute_query, db
+from modules.database import init_db, execute_query, execute_delete_user_and_passwords
 
 def main(page: ft.Page):
     page.title = "Generador Contraseñas"
@@ -68,9 +68,10 @@ def main(page: ft.Page):
         while not is_password_unique(conn,password):
             password = generate_password(pwd_length, inc_symbols, sym_end, inc_numbers, inc_uppercase)
 
-        print(password)
+        # print(password)
         output.value = password
-        outputInfo.value = "Password generado correctamente!"
+        outputInfo.value = "Password generado y copiado al portapapeles correctamente!"
+        copy_to_clipboard()
         page.update()
 
     def on_save_to_db(e):
@@ -93,7 +94,7 @@ def main(page: ft.Page):
           future_insert_password.result() 
           outputInfo.value = "Contraseña guardada en la base de datos." 
         except IntegrityError as e: 
-          outputInfo.value = "La contraseña ya existe en la base de datos. Por favor, genera una nueva."
+          outputInfo.value = "La contraseña ya existe en la base de datos. Por favor, genere una nueva."
         except Exception as e: 
           print(e)
         page.update()
@@ -109,17 +110,45 @@ def main(page: ft.Page):
     
     #Función para agregar usuarios nuevos al dropdown
     def add_user_drop(e):
-      print(new_username_input.value)
+      # print(new_username_input.value)
       if new_username_input.value != "":
         username_dropdown.options.append(ft.dropdown.Option(new_username_input.value))
         username_dropdown.value = new_username_input.value
         new_username_input.value = ""
         page.update()
-    
+
+    #Función para Eliminar usuarios y contraseñas
+    def on_delete_user(e): 
+        username_value = username_dropdown.value
+        if not username_value or username_value == "Nuevo Usuario":
+            outputInfo.value = "Por favor, selecciona un nombre de usuario válido para borrar."
+            page.update()
+            return
+        
+        future_delete_user = execute_delete_user_and_passwords(username_value)
+        if future_delete_user.result():
+            outputInfo.value = f"Usuario {username_value} y sus contraseñas asociadas han sido eliminados."
+        else:
+            outputInfo.value = f"Usuario {username_value} no encontrado."
+        
+        # Actualizar las opciones del desplegable
+        future_users = execute_query('SELECT username FROM users')
+        users = future_users.result()
+        user_options = [ft.dropdown.Option(username) for username, in users]
+        user_options.append(ft.dropdown.Option("Nuevo Usuario"))
+        username_dropdown.options = user_options
+        
+        page.update()
+
     # Función para guardar la config al cerrar
     def on_save(e): 
       config = act_config()
       page.window.destroy()
+
+    # Función para Copiar al portapapeles
+    def copy_to_clipboard():
+      if output.value != None:
+        page.set_clipboard(output.value)
 
     # Elementos de la página
     titulo = ft.Text(value="Generador de Contraseñas",size=28, weight=ft.FontWeight.BOLD)
@@ -136,15 +165,16 @@ def main(page: ft.Page):
     save_button = ft.ElevatedButton(text="Guardar en BD", on_click=on_save_to_db)
     save_button2 = ft.ElevatedButton("Guardar y Cerrar", on_click=on_save)
     add_user_button = ft.ElevatedButton("+", on_click=add_user_drop)
+    delete_user_button = ft.ElevatedButton("-", on_click=on_delete_user)
     
     # Agregar un contenedor centrado para el output 
     output_container = ft.Container( content=output, alignment=ft.alignment.center, expand=True )
-    outputInfo_container = ft.Container( content=outputInfo,height=80, width=100, padding=20, alignment=ft.alignment.center,expand=True )
+    outputInfo_container = ft.Container( content=outputInfo,height=80, width=100, padding=10, alignment=ft.alignment.center,expand=True )
     
     page.add(
       ft.Column([
         ft.Row([titulo]),
-        ft.Row([username_dropdown]),
+        ft.Row([username_dropdown,delete_user_button]),
         ft.Row([new_username_input, add_user_button]),        
         ft.Row([length]),
         ft.Row([include_symbols, symbols_at_end]),

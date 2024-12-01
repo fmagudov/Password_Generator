@@ -19,16 +19,26 @@ def generate_password(length, include_symbols, symbols_at_end, include_numbers, 
         password += random.choice(string.ascii_uppercase)
         length -= 1
     if include_symbols:
-        password += random.choice(symbols)
-        length -= 1
+        if not symbols_at_end:
+            password += random.choice(symbols)
+            length -= 1
+        else:
+            length -= 1
 
     # Generar el resto de la contraseña
-    all_chars = letters + digits + symbols
+    if not symbols_at_end:
+        all_chars = letters + digits + symbols
+    else:
+        all_chars = letters + digits
+
     password += ''.join(random.choice(all_chars) for i in range(length))
 
-    # Mezclar la contraseña si no se quiere símbolos al final
-    if not symbols_at_end:
-        password = ''.join(random.sample(password, len(password)))
+    # Mezclar la contraseña
+    password = ''.join(random.sample(password, len(password)))
+    
+    # Agregar símbolos al final
+    if symbols_at_end:
+        password += ''.join(random.sample(symbols,1))
 
     return password
 

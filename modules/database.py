@@ -36,3 +36,22 @@ def run_query(query, params=()):
 
 def execute_query(query, params=()):
     return executor.submit(run_query, query, params)
+
+def delete_user_and_passwords(username):
+    with sqlite3.connect(db, check_same_thread=False) as conn:
+        cursor = conn.cursor()
+        # Obtener el id del usuario
+        cursor.execute('SELECT id FROM users WHERE username = ?', (username,))
+        user_id = cursor.fetchone()
+        if user_id:
+            user_id = user_id[0]
+            # Eliminar las contraseñas asociadas
+            cursor.execute('DELETE FROM passwords WHERE user_id = ?', (user_id,))
+            # Eliminar el usuario
+            cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
+            conn.commit()
+            return True
+        return False
+
+def execute_delete_user_and_passwords(username):
+    return executor.submit(delete_user_and_passwords, username)
