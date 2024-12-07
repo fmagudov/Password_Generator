@@ -1,0 +1,10 @@
+version: 1.0.{build}
+os: Windows
+image: VisualStudio2019
+install:
+  - choco install python --version=3.9.0
+  - pip install flet
+build_script:
+  - flet build windows
+artifacts:
+  - path: dist/*.exe

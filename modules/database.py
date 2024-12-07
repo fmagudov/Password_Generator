@@ -1,9 +1,8 @@
 import sqlite3
 from os import getcwd
-from concurrent.futures import ThreadPoolExecutor
 
-executor = ThreadPoolExecutor(max_workers=5)  # Ajusta el número de hilos según sea necesario
-db = getcwd()+"\\db\\passwords.db"
+db = getcwd() + "\\db\\passwords.db"
+
 def init_db():
     conn = sqlite3.connect(db, check_same_thread=False)
     cursor = conn.cursor()
@@ -27,7 +26,7 @@ def init_db():
     return conn
 
 def run_query(query, params=()):
-    with sqlite3.connect(db, check_same_thread=False) as conn:
+    with sqlite3.connect(db) as conn:
         cursor = conn.cursor()
         cursor.execute(query, params)
         result = cursor.fetchall()
@@ -35,10 +34,10 @@ def run_query(query, params=()):
     return result
 
 def execute_query(query, params=()):
-    return executor.submit(run_query, query, params)
+    return run_query(query, params)
 
 def delete_user_and_passwords(username):
-    with sqlite3.connect(db, check_same_thread=False) as conn:
+    with sqlite3.connect(db) as conn:
         cursor = conn.cursor()
         # Obtener el id del usuario
         cursor.execute('SELECT id FROM users WHERE username = ?', (username,))
@@ -54,4 +53,4 @@ def delete_user_and_passwords(username):
         return False
 
 def execute_delete_user_and_passwords(username):
-    return executor.submit(delete_user_and_passwords, username)
+    return delete_user_and_passwords(username)

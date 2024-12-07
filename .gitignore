@@ -1,4 +1,11 @@
 Password_Generator.code-workspace
 .venv
 .vscode
+__pycache__
 otros
+build
+dist
+main.spec
+output
+main_tk.*
+main2.*
