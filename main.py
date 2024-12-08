@@ -2,6 +2,8 @@
 flet pack main.py -v -D -v -D
 pip install --upgrade auto-py-to-exe
 auto-py-to-exe
+flet build windows
+git config --global --add safe.directory '*'
 '''
 
 import flet as ft

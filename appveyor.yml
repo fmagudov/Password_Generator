@@ -15,7 +15,7 @@ install:
 
 build_script:
 # - flet pack main.py --name Password_Generator --onedir --product-name Password_Generator --product-version "1.0.0" --copyright "Copyright (c) 2024 Gaito's Inc."
-- flet build windows main.py --name Password_Generator --onedir --product-name Password_Generator --product-version "1.0.0" --copyright "Copyright (c) 2024 Gaito's Inc."
+- flet build windows
 
 test: off
 
