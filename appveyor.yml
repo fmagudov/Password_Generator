@@ -3,7 +3,7 @@ image:
 # - macOS
 # - Ubuntu
 
-skip_branch_with_pr: true
+# skip_branch_with_pr: true
 stack: python 3.13.0
 
 # environment:
