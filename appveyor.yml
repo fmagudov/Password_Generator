@@ -14,7 +14,7 @@ install:
 - pip install -r requirements.txt
 
 build_script:
-- flet pack main.py --name Password_Generator --D --product-name Password_Generator --product-version "1.0.0" --copyright "Copyright (c) 2024 Gaito's Inc."
+- flet pack main.py --name Password_Generator --onedir --product-name Password_Generator --product-version "1.0.0" --copyright "Copyright (c) 2024 Gaito's Inc."
 
 test: off
 
