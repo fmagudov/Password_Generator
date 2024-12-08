@@ -19,11 +19,11 @@ build_script:
 test: off
 
 # Publish artifacts to GitHub Releases on "tag" builds
-deploy:
-  provider: GitHub
-  # auth_token: $(GITHUB_TOKEN)
-  on:
-    APPVEYOR_REPO_TAG: true
+# deploy:
+#   provider: GitHub
+#   # auth_token: $(GITHUB_TOKEN)
+#   on:
+#     APPVEYOR_REPO_TAG: true
 
 #
 #   Windows package
