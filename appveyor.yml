@@ -4,7 +4,7 @@ image:
 # - Ubuntu
 
 # skip_branch_with_pr: true
-stack: python 3.13.0
+stack: python 3.8
 
 # environment:
 #   GITHUB_TOKEN:
